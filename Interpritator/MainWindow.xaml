@@ -6,7 +6,29 @@
         xmlns:local="clr-namespace:Interpritator"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
     <Grid>
-        
+        <Menu Height="28" VerticalAlignment="Top" Margin="0,0,-0.4,0">
+            <MenuItem Header="File" Height="28" Width="33">
+                <MenuItem Header="New Project" />
+                <MenuItem Header="Open Project" />
+                <MenuItem Header = "Save File" Click="Save_MenuClick"/>
+                <MenuItem Header = "Save As ... " Click="SaveAs_MenuClick"/>
+                <Separator />
+                <MenuItem Header="Exit"/>
+            </MenuItem>
+            <MenuItem Header="Run">
+                <MenuItem Header="Start programm"/>
+                <MenuItem Header="Start Debug" />
+            </MenuItem>
+        </Menu>
+
+        <RichTextBox HorizontalAlignment="Left" Height="352" Margin="161,41,0,0" VerticalAlignment="Top" Width="399" Name ="MainText">
+            <FlowDocument>
+                <Paragraph>
+                    <Run/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
     </Grid>
 </Window>

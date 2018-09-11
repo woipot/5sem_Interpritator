@@ -54,6 +54,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Source\Extension\BitArrayExtension.cs" />
+    <Compile Include="Source\Interpritator\Compiler.cs" />
+    <Compile Include="Source\Interpritator\CompilerException.cs" />
+    <Compile Include="Source\Interpritator\NumberCommand.cs" />
+    <Compile Include="Source\Interpritator\NumberCommandInterpritator.cs" />
+    <Compile Include="Source\Interpritator\Operations.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
