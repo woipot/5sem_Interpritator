@@ -50,8 +50,8 @@ namespace Interpritator.Source.Interpritator
 
         public BitArray GetOperator()
         {
-            var firstIndex = 3 * OperandSize;
-            var secondIndex = 31;
+            var firstIndex = OperandCount * OperandSize;
+            var secondIndex = CommandSize - 1;
 
             var result = _command.GetRange((uint)firstIndex, (uint)secondIndex);
             return result;

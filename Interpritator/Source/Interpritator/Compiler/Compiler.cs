@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using static Interpritator.Source.Interpritator.NumberCommand;
+using static Interpritator.Source.Interpritator.OperationsInfo;
 
 namespace Interpritator.Source.Interpritator
 {
@@ -30,7 +31,6 @@ namespace Interpritator.Source.Interpritator
                 try
                 {
                     var bitCommand = CommandToBit(command);
-
                     foreach (bool bit in bitCommand)
                     {
                         binaryWriter.Write(bit);
@@ -38,14 +38,13 @@ namespace Interpritator.Source.Interpritator
                 }
                 catch (CompilerException ce)
                 {
-                    
                     ce.CommandNumber = counter;
                     throw;
                 }
                 counter++;
             }
 
-            binaryWriter.Close();
+            binaryWriter.Dispose();
             file.Dispose();
         }
 
@@ -58,7 +57,6 @@ namespace Interpritator.Source.Interpritator
 
             if(splitedCommand.Length > 4)
                 throw new CompilerException(command, "Command has more than 4 parts");
-
 
             for (var i = 0; i < splitedCommand.Length - 1; i++)
             {
@@ -78,7 +76,9 @@ namespace Interpritator.Source.Interpritator
 
             var operatorInStr = splitedCommand.Last();
 
+            var bitOperator = OperatorToBit(operatorInStr);
 
+            resultCommand.SetOperator(bitOperator);
 
             return resultCommand.GetBitArr();
         }
@@ -99,8 +99,17 @@ namespace Interpritator.Source.Interpritator
 
         private static BitArray OperatorToBit(string strOperator)
         {
-            var bitOperator = new BitArray(OperatorSize);
+            var index = 0;
+            try
+            {
+                index = OperationsName.BinarySearch(strOperator);
+            }
+            catch (Exception)
+            {
+                throw new CompilerException(strOperator, "Incorrect operator");
+            }
 
+            var bitOperator = IntToBitArr(index, OperatorSize);
 
             return bitOperator;
         }
@@ -111,7 +120,7 @@ namespace Interpritator.Source.Interpritator
 
             var inString = Convert.ToString(number, 2);
 
-            var counter = 8; 
+            var counter = size - 1; 
             for (var i = inString.Length - 1; i >= 0; i--)
             {
                 var boolResult = inString[i] == '1';
@@ -125,5 +134,6 @@ namespace Interpritator.Source.Interpritator
 
             return result;
         }
+        
     }
 }

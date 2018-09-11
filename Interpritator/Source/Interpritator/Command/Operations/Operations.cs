@@ -10,6 +10,8 @@
 
         Swap, Insert, Convert, ConvertEx, MaxTwoDegree, 
 
-        LeftShift, RightShift, CycleLeftShifE, CecleLeftShift
+        LeftShift, RightShift, CycleLeftShifE, CecleLeftShift,
+
+        Copy
     }
 }

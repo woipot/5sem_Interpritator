@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Interpritator.Source.Interpritator;
+using Interpritator.Source.UserInterfaceUtilities;
 using Microsoft.Win32;
 
 namespace Interpritator
@@ -32,7 +33,7 @@ namespace Interpritator
             var isGoodDialogResult = SaveFileDialog();
             if (isGoodDialogResult)
             {
-                Compiler.SaveToBinFile(_currentFilePath, _mainRichText);
+                MainMenuFunc.SaveFile(_currentFilePath, _mainRichText);
             }
         }
 
@@ -43,12 +44,12 @@ namespace Interpritator
                 var isGoodDialogResult = SaveFileDialog();
                 if (isGoodDialogResult)
                 {
-                    Compiler.SaveToBinFile(_currentFilePath, _mainRichText);
+                    MainMenuFunc.SaveFile(_currentFilePath, _mainRichText);
                 }
             }
             else
             {
-                Compiler.SaveToBinFile(_currentFilePath, _mainRichText);
+                MainMenuFunc.SaveFile(_currentFilePath, _mainRichText);
             }
         }
 
