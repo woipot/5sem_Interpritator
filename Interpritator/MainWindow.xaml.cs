@@ -60,10 +60,12 @@ namespace Interpritator
 
         private bool OpenFileDialog()
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.AddExtension = true;
-            openFileDialog.DefaultExt = "inw";
-            openFileDialog.Filter = "Simple interpritator text file|*.inw";
+            var openFileDialog = new OpenFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = "inw",
+                Filter = "Simple interpritator text file|*.inw"
+            };
 
             if (openFileDialog.ShowDialog() == true)
             {
@@ -76,10 +78,12 @@ namespace Interpritator
         private bool SaveFileDialog()
         {
 
-            var saveFileDialog = new SaveFileDialog();
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.DefaultExt = "inw";
-            saveFileDialog.Filter = "Simple interpritator text file|*.inw";
+            var saveFileDialog = new SaveFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = "inw",
+                Filter = "Simple interpritator text file|*.inw"
+            };
 
             if (saveFileDialog.ShowDialog() == true)
             {
