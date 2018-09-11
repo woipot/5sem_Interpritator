@@ -95,5 +95,10 @@ namespace Interpritator
         }
 
         #endregion
+
+        private void Exit_MenuClick(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

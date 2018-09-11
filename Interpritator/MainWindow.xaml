@@ -15,7 +15,7 @@
                 <MenuItem Header = "Save File" Click="Save_MenuClick"/>
                 <MenuItem Header = "Save As ... " Click="SaveAs_MenuClick"/>
                 <Separator />
-                <MenuItem Header="Exit"/>
+                <MenuItem Header="Exit" Click="Exit_MenuClick"/>
             </MenuItem>
             <MenuItem Header="Run">
                 <MenuItem Header="Start programm"/>
