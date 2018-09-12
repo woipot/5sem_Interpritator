@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Interpritator.Source.Interpritator;
 using Interpritator.Source.UserInterfaceUtilities;
 using Microsoft.Win32;
@@ -14,7 +16,6 @@ namespace Interpritator
     {
 
         private string _currentFilePath;
-        private RichTextBox _mainRichText;
 
         public MainWindow()
         {
@@ -22,18 +23,28 @@ namespace Interpritator
 
             InitializeComponent();
 
-            _mainRichText = (RichTextBox) FindName("MainText");
-        }
 
+            //var result = BitArrayExtension.FromInt(2140123123);
+
+            //var seecResult = (BitArray)result.Clone();
+            //seecResult.Length = 9;
+
+            //var command = new NumberCommand(result);
+
+            //command.Multiplication();
+        }
+        
 
         #region Menu events
+
+        #region File Menu
 
         private void SaveAs_MenuClick(object sender, RoutedEventArgs e)
         {
             var isGoodDialogResult = SaveFileDialog();
             if (isGoodDialogResult)
             {
-                MainMenuFunc.SaveFile(_currentFilePath, _mainRichText);
+                MainMenuFunc.SaveFile(_currentFilePath, MainInputText);
             }
         }
 
@@ -44,14 +55,39 @@ namespace Interpritator
                 var isGoodDialogResult = SaveFileDialog();
                 if (isGoodDialogResult)
                 {
-                    MainMenuFunc.SaveFile(_currentFilePath, _mainRichText);
+                    MainMenuFunc.SaveFile(_currentFilePath, MainInputText);
                 }
             }
             else
             {
-                MainMenuFunc.SaveFile(_currentFilePath, _mainRichText);
+                MainMenuFunc.SaveFile(_currentFilePath, MainInputText);
             }
         }
+
+
+        private void Exit_MenuClick(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        #endregion
+
+
+        #region Run Menu
+
+        private void Start_MenuClick(object sender, RoutedEventArgs e)
+        {
+
+            //TODO: delete this (debug)
+            var isGoodDialogResult = SaveFileDialog();
+            if (isGoodDialogResult)
+            {
+                Compiler.SaveToBinFile(_currentFilePath, MainInputText);
+            }
+        }
+
+        #endregion
+
 
         #endregion
 
@@ -96,9 +132,6 @@ namespace Interpritator
 
         #endregion
 
-        private void Exit_MenuClick(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
+       
     }
 }

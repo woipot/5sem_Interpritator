@@ -7,9 +7,24 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
-    <Grid>
-        <Menu Height="28" VerticalAlignment="Top" Margin="0,0,-0.4,0">
-            <MenuItem Header="File" Height="28" Width="33">
+    <Grid Background="Gray" x:Name="MainGrid">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1.25*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="0.75*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="0.85*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="0.45*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="5" VerticalAlignment="Top" MinHeight="20" MaxHeight="20">
+            <MenuItem Header="File">
                 <MenuItem Header="New Project" />
                 <MenuItem Header="Open Project" />
                 <MenuItem Header = "Save File" Click="Save_MenuClick"/>
@@ -18,17 +33,41 @@
                 <MenuItem Header="Exit" Click="Exit_MenuClick"/>
             </MenuItem>
             <MenuItem Header="Run">
-                <MenuItem Header="Start programm"/>
+                <MenuItem Header="Start programm" Click="Start_MenuClick"/>
                 <MenuItem Header="Start Debug" />
             </MenuItem>
         </Menu>
 
-        <RichTextBox HorizontalAlignment="Left" Height="352" Margin="161,41,0,0" VerticalAlignment="Top" Width="399" Name ="MainText">
+        <RichTextBox Grid.Column="2" Grid.Row="1" Background="DarkGray" VerticalScrollBarVisibility ="Visible" x:Name ="MainInputText">
+            <FlowDocument>
+                
+            </FlowDocument>
+        </RichTextBox>
+
+        <GridSplitter Grid.Column="3"  Grid.Row="1" ShowsPreview="False" Width="3"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+
+
+        <WrapPanel Grid.Column="4" Grid.Row="1">
+            <Label Content="Przogram result"/>
+            <RichTextBox x:Name="OutputRich">
+                <FlowDocument>
+                    <Paragraph>
+                        <Run NumberSubstitution.CultureSource="User"/>
+                    </Paragraph>
+                </FlowDocument>
+            </RichTextBox>
+        </WrapPanel>
+
+        <RichTextBox Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="3" Background="DarkGray" BorderThickness="5" VerticalScrollBarVisibility ="Visible">
             <FlowDocument>
                 <Paragraph>
-                    <Run/>
+                    <Run NumberSubstitution.CultureSource="User"/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
+
+
+
     </Grid>
 </Window>

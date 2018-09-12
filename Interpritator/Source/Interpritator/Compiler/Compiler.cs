@@ -92,7 +92,8 @@ namespace Interpritator.Source.Interpritator
             if (intpart < 0 || intpart >= 512) throw new CompilerException(part, "Operand value out of range");
 
            
-            var result = IntToBitArr(intpart);
+            var result = BitArrayExtension.IntToBitArr(intpart);
+            result.Length = OperandSize;
 
             return result;
         }
@@ -109,30 +110,10 @@ namespace Interpritator.Source.Interpritator
                 throw new CompilerException(strOperator, "Incorrect operator");
             }
 
-            var bitOperator = IntToBitArr(index, OperatorSize);
+            var bitOperator = BitArrayExtension.IntToBitArr(index);
+            bitOperator.Length = OperatorSize;
 
             return bitOperator;
-        }
-
-        private static BitArray IntToBitArr(int number, int size = 9)
-        {
-            var result = new BitArray(size, false);
-
-            var inString = Convert.ToString(number, 2);
-
-            var counter = size - 1; 
-            for (var i = inString.Length - 1; i >= 0; i--)
-            {
-                var boolResult = inString[i] == '1';
-
-                result[counter] = boolResult; 
-
-                counter--;
-                if (counter < 0)
-                    break;
-            }
-
-            return result;
         }
         
     }
