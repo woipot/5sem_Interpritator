@@ -25,6 +25,7 @@ namespace Interpritator.Source.Interpritator
                     var byteCommand = br.ReadBytes(4);
                     var command = new NumberCommand(byteCommand);
 
+                    
 
                 }
             }
@@ -33,7 +34,6 @@ namespace Interpritator.Source.Interpritator
 
         }
 
-        
      
     }
 }

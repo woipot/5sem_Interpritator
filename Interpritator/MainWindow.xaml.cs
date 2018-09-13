@@ -23,15 +23,6 @@ namespace Interpritator
 
             InitializeComponent();
 
-
-            //var result = BitArrayExtension.FromInt(2140123123);
-
-            //var seecResult = (BitArray)result.Clone();
-            //seecResult.Length = 9;
-
-            //var command = new NumberCommand(result);
-
-            //command.Multiplication();
         }
         
 
@@ -77,13 +68,14 @@ namespace Interpritator
 
         private void Start_MenuClick(object sender, RoutedEventArgs e)
         {
-
             //TODO: delete this (debug)
             var isGoodDialogResult = SaveFileDialog();
             if (isGoodDialogResult)
             {
                 Compiler.SaveToBinFile(_currentFilePath, MainInputText);
             }
+
+            Compiler.DecodeBinFile(_currentFilePath, OutputRich);
         }
 
         #endregion

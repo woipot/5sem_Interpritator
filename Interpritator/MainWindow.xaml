@@ -59,6 +59,9 @@
             </RichTextBox>
         </WrapPanel>
 
+        <GridSplitter Grid.ColumnSpan="5"  Grid.Row="2"  ShowsPreview="False" Width="3"
+                      VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+
         <RichTextBox Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="3" Background="DarkGray" BorderThickness="5" VerticalScrollBarVisibility ="Visible">
             <FlowDocument>
                 <Paragraph>

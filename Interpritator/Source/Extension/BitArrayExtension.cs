@@ -7,8 +7,13 @@ namespace Interpritator.Source.Interpritator
 {
     static class BitArrayExtension
     {
+        #region Get Set Range
+
         public static BitArray GetRange(this BitArray bitArr, uint firstIndex, uint secondIndex)
         {
+            var inRange = secondIndex <= bitArr.Count;
+            if (!inRange)
+                throw new Exception("Index out of range");
             var size = (int)(secondIndex - firstIndex);
             var result = new BitArray(size);
 
@@ -26,24 +31,76 @@ namespace Interpritator.Source.Interpritator
         {
             var result = (BitArray)bitArray.Clone();
 
-            var maxSecondIndex = firstIndex + inputArray.Count;
-            var thisArrSize = bitArray.Count;
+            var topLimit = firstIndex + inputArray.Length;
+            var inRange = (topLimit) < bitArray.Length;
 
-            var secondIndex = Math.Min(maxSecondIndex, thisArrSize);
-
-            secondIndex -= 1;
-
-            var counter = (int)firstIndex;
-            for (var i = (int)secondIndex; i >= firstIndex; i--)
+            if (!inRange)
             {
-                result[counter] = inputArray[i];
-                counter++;
+                topLimit = bitArray.Length;
+            }
+
+            var inputIndex = 0;
+            for (var i = (int)firstIndex; i < topLimit; i++)
+            {
+                result[i] = inputArray[inputIndex];
+                inputIndex++;
             }
 
             return result;
         }
 
+        #endregion
 
+
+        #region Convert
+
+        public static bool[] ToBoolArray(this BitArray bitArray)
+        {
+            var boolArray = bitArray.Cast<bool>().ToArray();
+            return boolArray;
+        }
+
+        public static BitArray IntToBitArr(int number, int size = -1)
+        {
+            var preparingInt = new[] { number };
+            var reverceResult = new BitArray(preparingInt);
+
+            if (size >= 0)
+                reverceResult.Length = size;
+
+
+            var result = reverceResult.Reverce();
+
+
+            return result;
+        }
+
+        public static int ToInt(this BitArray operand)
+        {
+            var binaryOperand = string.Join("", operand.Cast<bool>().Select(Convert.ToInt32));
+
+            return Convert.ToInt32(binaryOperand, 2);
+        }
+
+        public static BitArray Reverce(this BitArray bitArray)
+        {
+            var result = new BitArray(bitArray.Count);
+
+            var resultIndex = 0;
+            for (var i = bitArray.Count - 1; i >= 0; i--)
+            {
+                result[resultIndex] = bitArray[i];
+
+                resultIndex++;
+            }
+
+            return result;
+        }
+
+        #endregion
+
+
+        #region Operations
 
         public static BitArray CycleShiftR(this BitArray operand, int count)
         {
@@ -55,12 +112,6 @@ namespace Interpritator.Source.Interpritator
                 source[0] = temp;
             }
             return operand = new BitArray(source);
-        }
-
-        public static bool[] ToBoolArray(this BitArray bitArray)
-        {
-            var boolArray = bitArray.Cast<bool>().ToArray();
-            return boolArray;
         }
 
         public static BitArray CycleShiftL(this BitArray operand, int count)
@@ -76,23 +127,6 @@ namespace Interpritator.Source.Interpritator
             return operand = new BitArray(source);
         }
 
-        public static BitArray IntToBitArr(int number, int size = -1)
-        {
-            var preparingInt = new[] {number};
-            var result = new BitArray(preparingInt);
-
-            if (size >= 0)
-                result.Length = size;
-
-            return result;
-        }
-
-        public static int ToInt(this BitArray operand)
-        {
-            var binaryOperand = string.Join("", operand.ToBoolArray());
-
-            return Convert.ToInt32(binaryOperand, 2);
-        }
 
         public static BitArray ShiftR(this BitArray operand, int number)
         {
@@ -108,7 +142,6 @@ namespace Interpritator.Source.Interpritator
             return operand;
         }
 
-
-
+        #endregion
     }
 }

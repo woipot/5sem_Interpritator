@@ -12,6 +12,8 @@ namespace Interpritator.Source.Interpritator
 {
     public static class Compiler
     {
+        #region File Operations
+
         public static void SaveToBinFile(string patch, RichTextBox dataInput)
         {
             var textRange = new TextRange(
@@ -19,8 +21,9 @@ namespace Interpritator.Source.Interpritator
                 dataInput.Document.ContentEnd
             );
 
-            var separators = new []{';'};
+            var separators = new[] { ';' };
             var commandsArr = textRange.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
 
             var file = File.Open(patch, FileMode.Create);
             var binaryWriter = new BinaryWriter(file);
@@ -28,13 +31,16 @@ namespace Interpritator.Source.Interpritator
             var counter = 1;
             foreach (var command in commandsArr)
             {
+                if (command == commandsArr.Last())
+                    break;
+
                 try
                 {
                     var bitCommand = CommandToBit(command);
-                    foreach (bool bit in bitCommand)
-                    {
-                        binaryWriter.Write(bit);
-                    }
+
+                    var inInt = bitCommand.ToInt();
+                    binaryWriter.Write(inInt);
+
                 }
                 catch (CompilerException ce)
                 {
@@ -48,14 +54,37 @@ namespace Interpritator.Source.Interpritator
             file.Dispose();
         }
 
+        public static void DecodeBinFile(string patch, RichTextBox dataOutput)
+        {
+            var binFile = File.Open(patch, FileMode.Open);
+
+            using (var br = new BinaryReader(binFile))
+            {
+                while (br.PeekChar() > -1)
+                {
+                    var byteCommand = br.ReadInt32();
+                    var command = new NumberCommand(BitArrayExtension.IntToBitArr(byteCommand));
+
+                    dataOutput.AppendText(command.ToString() + ";\n");
+                }
+            }
+
+            binFile.Dispose();
+        }
+
+        #endregion
+
+
+        #region ToBit Functions
+
         private static BitArray CommandToBit(string command)
         {
             var resultCommand = new NumberCommand();
 
-            var separators = new[] {' '};
+            var separators = new[] { ' ' };
             var splitedCommand = command.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
-            if(splitedCommand.Length > 4)
+            if (splitedCommand.Length > 4)
                 throw new CompilerException(command, "Command has more than 4 parts");
 
             for (var i = 0; i < splitedCommand.Length - 1; i++)
@@ -65,7 +94,8 @@ namespace Interpritator.Source.Interpritator
                 try
                 {
                     var bitPart = OperandToBit(operand);
-                    resultCommand.SetOperand((uint)i+1, bitPart);
+                    var operandNumber = OperandCount - i;
+                    resultCommand.SetOperand((uint)operandNumber, bitPart);
                 }
                 catch (CompilerException ce)
                 {
@@ -75,6 +105,7 @@ namespace Interpritator.Source.Interpritator
             }
 
             var operatorInStr = splitedCommand.Last();
+
 
             var bitOperator = OperatorToBit(operatorInStr);
 
@@ -91,9 +122,7 @@ namespace Interpritator.Source.Interpritator
             if (!isCorrect) throw new CompilerException(part, "Operand is not number");
             if (intpart < 0 || intpart >= 512) throw new CompilerException(part, "Operand value out of range");
 
-           
-            var result = BitArrayExtension.IntToBitArr(intpart);
-            result.Length = OperandSize;
+            var result = BitArrayExtension.IntToBitArr(intpart, OperandSize);
 
             return result;
         }
@@ -101,20 +130,17 @@ namespace Interpritator.Source.Interpritator
         private static BitArray OperatorToBit(string strOperator)
         {
             var index = 0;
-            try
-            {
-                index = OperationsName.BinarySearch(strOperator);
-            }
-            catch (Exception)
-            {
-                throw new CompilerException(strOperator, "Incorrect operator");
-            }
 
-            var bitOperator = BitArrayExtension.IntToBitArr(index);
-            bitOperator.Length = OperatorSize;
+            index = OperationsName.IndexOf(strOperator);
+            if (index < 0)
+                throw new CompilerException(strOperator, "Incorrect operator");
+
+            var bitOperator = BitArrayExtension.IntToBitArr(index, OperatorSize);
 
             return bitOperator;
         }
+
+        #endregion
         
     }
 }

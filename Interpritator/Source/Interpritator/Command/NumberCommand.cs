@@ -57,7 +57,7 @@ namespace Interpritator.Source.Interpritator
         public BitArray GetOperator()
         {
             var firstIndex = OperandCount * OperandSize;
-            var secondIndex = CommandSize - 1;
+            var secondIndex = CommandSize;
 
             var result = _command.GetRange((uint)firstIndex, (uint)secondIndex);
             return result;
@@ -74,6 +74,32 @@ namespace Interpritator.Source.Interpritator
         public BitArray GetBitArr()
         {
             return (BitArray)_command.Clone();
+        }
+
+        #endregion
+
+
+        #region Overrides
+
+        public override string ToString()
+        {
+            var firstOperand = GetOperand(1);
+            var secondOperand = GetOperand(2);
+            var thirdOperand = GetOperand(3);
+            var operation = GetOperator();
+
+
+            var firstInStr = Convert.ToString(firstOperand.ToInt());
+            var secondInStr = Convert.ToString(secondOperand.ToInt());
+            var thirdInStr = Convert.ToString(thirdOperand.ToInt());
+
+            var operationNumber = operation.ToInt();
+            var operationName = OperationsInfo.OperationsName[operationNumber];
+
+
+            var result = $"{thirdInStr} {secondInStr} {firstInStr} {operationName}";
+
+            return result;
         }
 
         #endregion
@@ -97,7 +123,7 @@ namespace Interpritator.Source.Interpritator
             var thirdInNewBase = Convert.ToString(thirdOperand.ToInt(), bs).ToUpper();
             var operationInNewBase = Convert.ToString(operation.ToInt(), bs).ToUpper();
 
-            var result = $"{thirdOperand} {secondOperand} {firstOperand} {operationInNewBase}";
+            var result = $"{thirdInNewBase} {secondInNewBase} {firstInNewBase} {operationInNewBase}";
 
             return result;
         }
