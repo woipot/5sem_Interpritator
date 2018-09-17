@@ -70,7 +70,6 @@ namespace Interpritator.Source.Interpritator
             _command = _command.SetRange((uint)firstIndex, operatBitArr);
         }
 
-
         public BitArray GetBitArr()
         {
             return (BitArray)_command.Clone();
@@ -118,7 +117,7 @@ namespace Interpritator.Source.Interpritator
 
             if (bs > 36 || bs < 0) throw new Exception("Incorrect base");
 
-            var firstInNewBase = Convert.ToString(firstOperand.ToInt() , bs).ToUpper();
+            var firstInNewBase = Convert.ToString(firstOperand.ToInt(), bs).ToUpper();
             var secondInNewBase = Convert.ToString(secondOperand.ToInt(), bs).ToUpper();
             var thirdInNewBase = Convert.ToString(thirdOperand.ToInt(), bs).ToUpper();
             var operationInNewBase = Convert.ToString(operation.ToInt(), bs).ToUpper();
@@ -180,12 +179,14 @@ namespace Interpritator.Source.Interpritator
             return result;
         }
 
-        public void CoImpication() //6 
+        public BitArray CoImpication() //6 
         {
             var implicationResult = Impication();
 
             var result = implicationResult.Not();
             SetOperand(3, result);
+
+            return result;
         }
 
         public BitArray Equivalence() //7 
@@ -229,7 +230,7 @@ namespace Interpritator.Source.Interpritator
 
             SetOperand(3, result);
 
-            return  result;
+            return result;
         }
 
         public BitArray Addition() //10 
@@ -298,7 +299,7 @@ namespace Interpritator.Source.Interpritator
             var secondOperand = GetOperand(2);
 
             SetOperand(1, secondOperand);
-            SetOperand(2,firstOperand);
+            SetOperand(2, firstOperand);
         }
 
         public BitArray Insert() //16 
@@ -335,7 +336,7 @@ namespace Interpritator.Source.Interpritator
         public BitArray ReadInBase(string operand) //18
         {
             var secondOperand = GetOperand(2);
-            var bs  = secondOperand.ToInt();
+            var bs = secondOperand.ToInt();
 
             if (bs > 36 || bs < 0) throw new Exception("Incorrect base");
 
@@ -356,7 +357,7 @@ namespace Interpritator.Source.Interpritator
                 if (num % (int)Math.Pow(2, i) == 0)
                     divider = i;
             }
-            
+
             var result = BitArrayExtension.IntToBitArr(divider, OperandSize);
             SetOperand(3, result);
 
@@ -426,5 +427,6 @@ namespace Interpritator.Source.Interpritator
 
 
         #endregion
+
     }
 }

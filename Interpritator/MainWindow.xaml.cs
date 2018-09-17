@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using Interpritator.Source.Interpritator;
 using Interpritator.Source.UserInterfaceUtilities;
@@ -14,7 +15,6 @@ namespace Interpritator
     /// </summary>
     public partial class MainWindow : Window
     {
-
         private string _currentFilePath;
 
         public MainWindow()
@@ -25,6 +25,49 @@ namespace Interpritator
 
         }
         
+        
+        #region Properties
+
+        public string CommandInput
+        {
+            get
+            {
+                var textRange = new TextRange(
+                    MainInputText.Document.ContentStart,
+                    MainInputText.Document.ContentEnd
+                );
+
+                return textRange.Text;
+            }
+
+            set
+            {
+                MainInputText.Document.Blocks.Clear();
+                MainInputText.AppendText(value);
+            }
+        }
+
+        public string ResultOutput
+        {
+            get
+            {
+                var textRange = new TextRange(
+                    OutputRich.Document.ContentStart,
+                    OutputRich.Document.ContentEnd
+                );
+
+                return textRange.Text;
+            }
+
+            set
+            {
+                OutputRich.Document.Blocks.Clear();
+                OutputRich.AppendText(value);
+            }
+        }
+
+        #endregion
+
 
         #region Menu events
 
@@ -35,7 +78,7 @@ namespace Interpritator
             var isGoodDialogResult = SaveFileDialog();
             if (isGoodDialogResult)
             {
-                MainMenuFunc.SaveFile(_currentFilePath, MainInputText);
+                MainMenuFunc.SaveFile(_currentFilePath, CommandInput);
             }
         }
 
@@ -46,12 +89,12 @@ namespace Interpritator
                 var isGoodDialogResult = SaveFileDialog();
                 if (isGoodDialogResult)
                 {
-                    MainMenuFunc.SaveFile(_currentFilePath, MainInputText);
+                    MainMenuFunc.SaveFile(_currentFilePath, CommandInput);
                 }
             }
             else
             {
-                MainMenuFunc.SaveFile(_currentFilePath, MainInputText);
+                MainMenuFunc.SaveFile(_currentFilePath, CommandInput);
             }
         }
 
@@ -68,14 +111,20 @@ namespace Interpritator
 
         private void Start_MenuClick(object sender, RoutedEventArgs e)
         {
-            //TODO: delete this (debug)
+            //var patch = SaveBinFileDialog();
+            //if (patch != null)
+            //{
+            //    Compiler.SaveToBinFile(patch, MainInputText);
+            //    NumberCommandInterpritator.StartProgram(patch, OutputRich);
+            //}
+
             var isGoodDialogResult = SaveFileDialog();
             if (isGoodDialogResult)
             {
-                Compiler.SaveToBinFile(_currentFilePath, MainInputText);
+                Compiler.SaveToBinFile(_currentFilePath, CommandInput);
             }
 
-            Compiler.DecodeBinFile(_currentFilePath, OutputRich);
+            ResultOutput = Compiler.DecodeBinFile(_currentFilePath);
         }
 
         #endregion
@@ -122,8 +171,43 @@ namespace Interpritator
             return false;
         }
 
+        private string OpenBinFileDialog()
+        {
+            string newFilePatch = null;
+            var openFileDialog = new OpenFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = "inwoi",
+                Filter = "Command interpritator file|*.inwoi"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                newFilePatch = openFileDialog.FileName;
+            }
+            return newFilePatch;
+        }
+
+        private string SaveBinFileDialog()
+        {
+            string newFilePatch = null;
+            var saveFileDialog = new SaveFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = "inwoi",
+                Filter = "Command interpritator file|*.inwoi"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+
+                newFilePatch = saveFileDialog.FileName;
+            }
+            return newFilePatch;
+        }
+
         #endregion
 
-       
+
     }
 }

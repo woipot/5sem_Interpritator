@@ -77,9 +77,9 @@ namespace Interpritator.Source.Interpritator
 
         public static int ToInt(this BitArray operand)
         {
-            var binaryOperand = string.Join("", operand.Cast<bool>().Select(Convert.ToInt32));
+            var inStr = operand.ConvertToString();
 
-            return Convert.ToInt32(binaryOperand, 2);
+            return Convert.ToInt32(inStr, 2);
         }
 
         public static BitArray Reverce(this BitArray bitArray)
@@ -95,6 +95,18 @@ namespace Interpritator.Source.Interpritator
             }
 
             return result;
+        }
+
+        #endregion
+
+
+        #region override
+
+        
+        public static string ConvertToString(this BitArray bitArray)
+        {
+            var inString = string.Join("", bitArray.Cast<bool>().Select(Convert.ToInt32));
+            return inString;
         }
 
         #endregion

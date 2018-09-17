@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using Interpritator.Annotations;
 using static Interpritator.Source.Interpritator.NumberCommand;
 using static Interpritator.Source.Interpritator.OperationsInfo;
 
@@ -14,15 +16,11 @@ namespace Interpritator.Source.Interpritator
     {
         #region File Operations
 
-        public static void SaveToBinFile(string patch, RichTextBox dataInput)
+        public static void SaveToBinFile(string patch,[NotNull] string dataInput)
         {
-            var textRange = new TextRange(
-                dataInput.Document.ContentStart,
-                dataInput.Document.ContentEnd
-            );
 
             var separators = new[] { ';' };
-            var commandsArr = textRange.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            var commandsArr = dataInput.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
 
             var file = File.Open(patch, FileMode.Create);
@@ -54,10 +52,11 @@ namespace Interpritator.Source.Interpritator
             file.Dispose();
         }
 
-        public static void DecodeBinFile(string patch, RichTextBox dataOutput)
+        public static string DecodeBinFile(string patch)
         {
             var binFile = File.Open(patch, FileMode.Open);
 
+            var result = new StringBuilder();
             using (var br = new BinaryReader(binFile))
             {
                 while (br.PeekChar() > -1)
@@ -65,11 +64,13 @@ namespace Interpritator.Source.Interpritator
                     var byteCommand = br.ReadInt32();
                     var command = new NumberCommand(BitArrayExtension.IntToBitArr(byteCommand));
 
-                    dataOutput.AppendText(command.ToString() + ";\n");
+                    result.Append(command + ";\n");
                 }
             }
 
             binFile.Dispose();
+    
+            return result.ToString();
         }
 
         #endregion
@@ -94,7 +95,7 @@ namespace Interpritator.Source.Interpritator
                 try
                 {
                     var bitPart = OperandToBit(operand);
-                    var operandNumber = OperandCount - i;
+                    var operandNumber = splitedCommand.Length - i - 1;
                     resultCommand.SetOperand((uint)operandNumber, bitPart);
                 }
                 catch (CompilerException ce)
