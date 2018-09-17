@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Media;
 using Interpritator.Source.Interpritator;
 using Interpritator.Source.UserInterfaceUtilities;
 using Microsoft.Win32;
@@ -28,7 +25,7 @@ namespace Interpritator
         
         #region Properties
 
-        public string CommandInput
+        public string CommandsInput
         {
             get
             {
@@ -65,6 +62,24 @@ namespace Interpritator
                 OutputRich.AppendText(value);
             }
         }
+        public string ErrorOutput
+        {
+            get
+            {
+                var textRange = new TextRange(
+                    ErrorRich.Document.ContentStart,
+                    ErrorRich.Document.ContentEnd
+                );
+
+                return textRange.Text;
+            }
+
+            set
+            {
+                ErrorRich.Document.Blocks.Clear();
+                ErrorRich.AppendText(value);
+            }
+        }
 
         #endregion
 
@@ -78,7 +93,7 @@ namespace Interpritator
             var isGoodDialogResult = SaveFileDialog();
             if (isGoodDialogResult)
             {
-                MainMenuFunc.SaveFile(_currentFilePath, CommandInput);
+                MainMenuFunc.SaveFile(_currentFilePath, CommandsInput);
             }
         }
 
@@ -89,12 +104,12 @@ namespace Interpritator
                 var isGoodDialogResult = SaveFileDialog();
                 if (isGoodDialogResult)
                 {
-                    MainMenuFunc.SaveFile(_currentFilePath, CommandInput);
+                    MainMenuFunc.SaveFile(_currentFilePath, CommandsInput);
                 }
             }
             else
             {
-                MainMenuFunc.SaveFile(_currentFilePath, CommandInput);
+                MainMenuFunc.SaveFile(_currentFilePath, CommandsInput);
             }
         }
 
@@ -111,20 +126,31 @@ namespace Interpritator
 
         private void Start_MenuClick(object sender, RoutedEventArgs e)
         {
-            //var patch = SaveBinFileDialog();
-            //if (patch != null)
-            //{
-            //    Compiler.SaveToBinFile(patch, MainInputText);
-            //    NumberCommandInterpritator.StartProgram(patch, OutputRich);
-            //}
-
-            var isGoodDialogResult = SaveFileDialog();
-            if (isGoodDialogResult)
+            var patch = SaveBinFileDialog();
+            if (patch != null)
             {
-                Compiler.SaveToBinFile(_currentFilePath, CommandInput);
+                try
+                {
+                    Compiler.SaveToBinFile(patch, CommandsInput);
+                    var interpritatorResult = NumberCommandInterpritator.StartProgram(patch);
+
+                    ResultOutput = interpritatorResult.Key;
+                    ErrorOutput = interpritatorResult.Value;
+                }
+                catch (CompilerException ce)
+                {
+                    ErrorOutput = "#Error: "+ ce.Message + "-->" + ce.WrongCommand + "Command № ["+ce.CommandNumber+"]\n";
+                }
+              
             }
 
-            ResultOutput = Compiler.DecodeBinFile(_currentFilePath);
+            //var isGoodDialogResult = SaveFileDialog();
+            //if (isGoodDialogResult)
+            //{
+            //    Compiler.SaveToBinFile(_currentFilePath, CommandInput);
+            //}
+
+            //ResultOutput = Compiler.DecodeBinFile(_currentFilePath);
         }
 
         #endregion

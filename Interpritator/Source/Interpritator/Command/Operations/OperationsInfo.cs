@@ -8,7 +8,7 @@ namespace Interpritator.Source.Interpritator
         {
             "Shb", "!", "||", "&&", "Xor",
 
-            "->", "<-", "~", @"\/",
+            "->", "<-", "~", @"\/", @"/\",
 
             "+", "-", "*", "/", "mod",
 

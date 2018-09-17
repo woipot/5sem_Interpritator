@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Runtime.ExceptionServices;
-using System.Windows.Media.Imaging;
 
-namespace Interpritator.Source.Interpritator
+namespace Interpritator.Source.Interpritator.Command
 {
     public class NumberCommand
     {
@@ -88,9 +86,9 @@ namespace Interpritator.Source.Interpritator
             var operation = GetOperator();
 
 
-            var firstInStr = Convert.ToString(firstOperand.ToInt());
-            var secondInStr = Convert.ToString(secondOperand.ToInt());
-            var thirdInStr = Convert.ToString(thirdOperand.ToInt());
+            var firstInStr = System.Convert.ToString(firstOperand.ToInt());
+            var secondInStr = System.Convert.ToString(secondOperand.ToInt());
+            var thirdInStr = System.Convert.ToString(thirdOperand.ToInt());
 
             var operationNumber = operation.ToInt();
             var operationName = OperationsInfo.OperationsName[operationNumber];
@@ -117,26 +115,26 @@ namespace Interpritator.Source.Interpritator
 
             if (bs > 36 || bs < 0) throw new Exception("Incorrect base");
 
-            var firstInNewBase = Convert.ToString(firstOperand.ToInt(), bs).ToUpper();
-            var secondInNewBase = Convert.ToString(secondOperand.ToInt(), bs).ToUpper();
-            var thirdInNewBase = Convert.ToString(thirdOperand.ToInt(), bs).ToUpper();
-            var operationInNewBase = Convert.ToString(operation.ToInt(), bs).ToUpper();
+            var firstInNewBase = System.Convert.ToString(firstOperand.ToInt(), bs).ToUpper();
+            var secondInNewBase = System.Convert.ToString(secondOperand.ToInt(), bs).ToUpper();
+            var thirdInNewBase = System.Convert.ToString(thirdOperand.ToInt(), bs).ToUpper();
+            var operationInNewBase = System.Convert.ToString(operation.ToInt(), bs).ToUpper();
 
             var result = $"{thirdInNewBase} {secondInNewBase} {firstInNewBase} {operationInNewBase}";
 
-            return result;
+             return result ;
         }
 
-        public BitArray NotFirstToFirst() //1 
+        public NumberCommand NotFirst() //1 
         {
             var firstOperand = GetOperand(1);
             firstOperand.Not();
             SetOperand(3, firstOperand);
 
-            return firstOperand;
+            return new NumberCommand(_command);
         }
 
-        public BitArray Or() //2 
+        public NumberCommand Or() //2 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -144,10 +142,10 @@ namespace Interpritator.Source.Interpritator
             var result = firstOperand.Or(secondOperand);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray And() //3 
+        public NumberCommand And() //3 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -155,20 +153,20 @@ namespace Interpritator.Source.Interpritator
             var result = firstOperand.And(secondOperand);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Xor() //4 
+        public NumberCommand Xor() //4 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
 
             var result = firstOperand.Xor(secondOperand);
             SetOperand(3, result);
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Impication() //5
+        public NumberCommand Impication() //5
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -176,20 +174,21 @@ namespace Interpritator.Source.Interpritator
             var result = firstOperand.Not().Or(secondOperand);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray CoImpication() //6 
+        public NumberCommand CoImpication() //6 
         {
             var implicationResult = Impication();
 
-            var result = implicationResult.Not();
+            var result = implicationResult.GetOperand(3);
+            result.Not();
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Equivalence() //7 
+        public NumberCommand Equivalence() //7 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -204,10 +203,10 @@ namespace Interpritator.Source.Interpritator
 
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Pierce() //8 
+        public NumberCommand Pierce() //8 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -217,10 +216,10 @@ namespace Interpritator.Source.Interpritator
 
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Scheffer() //9 
+        public NumberCommand Scheffer() //9 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -230,10 +229,10 @@ namespace Interpritator.Source.Interpritator
 
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Addition() //10 
+        public NumberCommand Addition() //10 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -242,10 +241,10 @@ namespace Interpritator.Source.Interpritator
             var result = BitArrayExtension.IntToBitArr(resultInt);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Subtraction() //11 
+        public NumberCommand Subtraction() //11 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -254,10 +253,10 @@ namespace Interpritator.Source.Interpritator
             var result = BitArrayExtension.IntToBitArr(resultInt);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Multiplication() //12 
+        public NumberCommand Multiplication() //12 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -266,10 +265,10 @@ namespace Interpritator.Source.Interpritator
             var result = BitArrayExtension.IntToBitArr(resultInt);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray StrongDivision() //13 
+        public NumberCommand StrongDivision() //13 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -278,10 +277,10 @@ namespace Interpritator.Source.Interpritator
             var result = BitArrayExtension.IntToBitArr(resultInt);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray Mod() //14 
+        public NumberCommand Mod() //14 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -290,19 +289,21 @@ namespace Interpritator.Source.Interpritator
             var result = BitArrayExtension.IntToBitArr(resultInt);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public void Swap() //15 
+        public NumberCommand Swap() //15 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
 
             SetOperand(1, secondOperand);
             SetOperand(2, firstOperand);
+            return new NumberCommand(_command);
+
         }
 
-        public BitArray Insert() //16 
+        public NumberCommand Insert() //16 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -316,10 +317,10 @@ namespace Interpritator.Source.Interpritator
 
             firstOperand[position] = thirdOperand[position];
 
-            return firstOperand;
+            return new NumberCommand(_command);
         }
 
-        public string GetNumInSecOperandBase() //17 
+        public string Convert() //17 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -329,25 +330,25 @@ namespace Interpritator.Source.Interpritator
 
             if (bs > 36 || bs < 0) throw new Exception("Incorrect base");
 
-            var numInNewBase = Convert.ToString(num, bs).ToUpper();
+            var numInNewBase = System.Convert.ToString(num, bs).ToUpper();
             return numInNewBase;
         }
 
-        public BitArray ReadInBase(string operand) //18
+        public NumberCommand ReadInBase(string operand) //18
         {
             var secondOperand = GetOperand(2);
             var bs = secondOperand.ToInt();
 
             if (bs > 36 || bs < 0) throw new Exception("Incorrect base");
 
-            var num = Convert.ToInt32(operand, bs);
+            var num = System.Convert.ToInt32(operand, bs);
             var result = BitArrayExtension.IntToBitArr(num);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray FindMaxDivider() //19
+        public NumberCommand FindMaxDivider() //19
         {
             var firstOperand = GetOperand(1);
             var num = firstOperand.ToInt();
@@ -361,10 +362,10 @@ namespace Interpritator.Source.Interpritator
             var result = BitArrayExtension.IntToBitArr(divider, OperandSize);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray ShiftL() //20 
+        public NumberCommand ShiftL() //20 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -374,10 +375,10 @@ namespace Interpritator.Source.Interpritator
             var result = firstOperand.ShiftL(shiftLength);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray ShiftR() //21 
+        public NumberCommand ShiftR() //21 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -387,10 +388,10 @@ namespace Interpritator.Source.Interpritator
             var result = firstOperand.ShiftR(shiftLength);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray CycleShiftL() //22
+        public NumberCommand CycleShiftL() //22
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -400,10 +401,10 @@ namespace Interpritator.Source.Interpritator
             var result = firstOperand.CycleShiftL(shiftLength);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray CycleShiftR() //23 
+        public NumberCommand CycleShiftR() //23 
         {
             var firstOperand = GetOperand(1);
             var secondOperand = GetOperand(2);
@@ -413,16 +414,16 @@ namespace Interpritator.Source.Interpritator
             var result = firstOperand.CycleShiftR(shiftLength);
             SetOperand(3, result);
 
-            return result;
+             return new NumberCommand(_command);
         }
 
-        public BitArray MoveSecToFirst() //24
+        public NumberCommand Copy() //24
         {
             var secondOperand = GetOperand(2);
 
             SetOperand(1, secondOperand);
 
-            return secondOperand;
+            return new NumberCommand(_command); ;
         }
 
 

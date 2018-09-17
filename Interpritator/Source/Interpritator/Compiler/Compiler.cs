@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using Interpritator.Annotations;
-using static Interpritator.Source.Interpritator.NumberCommand;
+using Interpritator.Source.Interpritator.Command;
+using static Interpritator.Source.Interpritator.Command.NumberCommand;
 using static Interpritator.Source.Interpritator.OperationsInfo;
 
 namespace Interpritator.Source.Interpritator
@@ -100,17 +98,24 @@ namespace Interpritator.Source.Interpritator
                 }
                 catch (CompilerException ce)
                 {
-                    ce.WrongCommand += " in " + command;
+                    ce.WrongCommand += " in command :" + command;
                     throw;
                 }
             }
 
+
             var operatorInStr = splitedCommand.Last();
 
-
-            var bitOperator = OperatorToBit(operatorInStr);
-
-            resultCommand.SetOperator(bitOperator);
+            try
+            {
+                var bitOperator = OperatorToBit(operatorInStr);
+                resultCommand.SetOperator(bitOperator);
+            }
+            catch (CompilerException ce)
+            {
+                ce.WrongCommand += " in command :" + command;
+                throw;
+            }
 
             return resultCommand.GetBitArr();
         }
@@ -120,7 +125,7 @@ namespace Interpritator.Source.Interpritator
 
             var isCorrect = int.TryParse(part, out var intpart);
 
-            if (!isCorrect) throw new CompilerException(part, "Operand is not number");
+            if (!isCorrect) throw new CompilerException(part,"Operand is not number");
             if (intpart < 0 || intpart >= 512) throw new CompilerException(part, "Operand value out of range");
 
             var result = BitArrayExtension.IntToBitArr(intpart, OperandSize);

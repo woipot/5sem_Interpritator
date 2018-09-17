@@ -98,11 +98,8 @@
             </Grid.RowDefinitions>
 
             <Label Background="LightSteelBlue"  Grid.Row="0" Content="Info"/>
-            <RichTextBox Grid.Column="0" Grid.Row="1" Background="DarkGray" VerticalScrollBarVisibility ="Visible" IsReadOnly="True">
+            <RichTextBox Grid.Column="0" Grid.Row="1" x:Name ="ErrorRich" Background="DarkGray" VerticalScrollBarVisibility ="Visible" IsReadOnly="True">
                 <FlowDocument>
-                    <Paragraph>
-                        <Run NumberSubstitution.CultureSource="User"/>
-                    </Paragraph>
                 </FlowDocument>
             </RichTextBox>
         </Grid>

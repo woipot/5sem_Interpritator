@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using Interpritator.Annotations;
 
 namespace Interpritator.Source.UserInterfaceUtilities
