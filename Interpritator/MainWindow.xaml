@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Interpritator"
         mc:Ignorable="d"
         Title="Number Interpritator" Height="450" Width="800">
 
@@ -26,7 +25,7 @@
         <Menu Grid.Row="0" Grid.ColumnSpan="5" VerticalAlignment="Top" MinHeight="20" MaxHeight="20">
             <MenuItem Header="File">
                 <MenuItem Header="New Project" />
-                <MenuItem Header="Open Project" />
+                <MenuItem Header="Open Project" Click="OpenDirectory_Click"/>
                 <MenuItem Header = "Save File" Click="Save_MenuClick"/>
                 <MenuItem Header = "Save As ... " Click="SaveAs_MenuClick"/>
                 <Separator />
@@ -38,9 +37,15 @@
             </MenuItem>
         </Menu>
 
-        <TreeView Grid.Row="1" Background="DimGray"/>
-        
-        <GridSplitter Grid.Column="1"  Grid.Row="1" ShowsPreview="False" Width="3"
+        <TreeView Background="DarkGray"
+                  Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
+                  x:Name="TrvStructure"
+                  TreeViewItem.Collapsed ="TreeViewItem_Collapsed"
+                  TreeViewItem.Expanded="TreeViewItem_Expanded"/>
+
+
+
+        <GridSplitter Grid.Column="1"  Grid.Row="1"  Grid.RowSpan="3"  ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" />
 
 
@@ -55,7 +60,7 @@
 
 
             <Label Background="LightSteelBlue"  Grid.Row="0" Content="fileName"/>
-            <RichTextBox Grid.Column="2" Grid.Row="1" Background="DarkGray" VerticalScrollBarVisibility ="Visible" x:Name ="MainInputText">
+            <RichTextBox Grid.Row="1" Background="DarkGray" VerticalScrollBarVisibility ="Visible" x:Name ="MainInputText">
                 <FlowDocument>
 
                 </FlowDocument>
@@ -85,10 +90,10 @@
             </RichTextBox>
         </Grid>
 
-        <GridSplitter Grid.Row="2" Grid.ColumnSpan="5" Height="3"
+        <GridSplitter Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3" Height="3"
                       HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-        <Grid Grid.Column="0" Grid.ColumnSpan ="5" Grid.Row="3">
+        <Grid Grid.Column="2" Grid.ColumnSpan ="3" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>

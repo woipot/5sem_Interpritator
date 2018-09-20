@@ -1,9 +1,19 @@
 ﻿using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Interpritator.Source.Interpritator;
 using Interpritator.Source.UserInterfaceUtilities;
-using Microsoft.Win32;
+using Application = System.Windows.Application;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using Orientation = System.Windows.Controls.Orientation;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace Interpritator
 {
@@ -13,13 +23,12 @@ namespace Interpritator
     public partial class MainWindow : Window
     {
         private string _currentFilePath;
+        private DirectoryInfo _projectRoot;
 
         public MainWindow()
         {
             _currentFilePath = null;
-
             InitializeComponent();
-
         }
         
         
@@ -88,6 +97,40 @@ namespace Interpritator
 
         #region File Menu
 
+        private void OpenDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            var folderBrowser = new FolderBrowserDialog();
+
+            folderBrowser.ShowDialog();
+
+            if (!string.IsNullOrWhiteSpace(folderBrowser.SelectedPath))
+            {
+                //TrvStructure.
+
+                _projectRoot = new DirectoryInfo(folderBrowser.SelectedPath);
+                var rootItem = CreateTreeItem(_projectRoot, false);
+
+                var directories = Directory.GetDirectories(folderBrowser.SelectedPath);
+                var files = Directory.GetFiles(folderBrowser.SelectedPath);
+
+                var directoriesInfo = directories.Select(i => new DirectoryInfo(i));
+                var filesInfo = files.Select(i => new FileInfo(i));
+
+                foreach (var item in directoriesInfo)
+                {
+                    rootItem.Items.Add(CreateTreeItem(item));
+                }
+
+                foreach (var item in filesInfo)
+                {
+                    rootItem.Items.Add(CreateTreeItem(item));
+                }
+
+                TrvStructure.Items.Add(rootItem);
+            }
+
+        }
+
         private void SaveAs_MenuClick(object sender, RoutedEventArgs e)
         {
             var isGoodDialogResult = SaveFileDialog();
@@ -123,7 +166,6 @@ namespace Interpritator
 
 
         #region Run Menu
-
         private void Start_MenuClick(object sender, RoutedEventArgs e)
         {
             var patch = SaveBinFileDialog();
@@ -143,14 +185,6 @@ namespace Interpritator
                 }
               
             }
-
-            //var isGoodDialogResult = SaveFileDialog();
-            //if (isGoodDialogResult)
-            //{
-            //    Compiler.SaveToBinFile(_currentFilePath, CommandInput);
-            //}
-
-            //ResultOutput = Compiler.DecodeBinFile(_currentFilePath);
         }
 
         #endregion
@@ -235,5 +269,99 @@ namespace Interpritator
         #endregion
 
 
+        #region treeView
+
+        public void TreeViewItem_Expanded(object sender, RoutedEventArgs e)
+        {
+            var item = e.Source as TreeViewItem;
+            if ((item.Items.Count == 1) && (item.Items[0] is string))
+            {
+
+                item.Items.Clear();
+
+                DirectoryInfo expandedDir = null;
+
+                if (item.Tag is DirectoryInfo)
+                    expandedDir = (item.Tag as DirectoryInfo);
+                try
+                {
+                    if (expandedDir != null)
+                    {
+                        foreach (var subDir in expandedDir.GetDirectories())
+                            item.Items.Add(CreateTreeItem(subDir));
+
+                        foreach (var subDir in expandedDir.GetFiles())
+                            item.Items.Add(CreateTreeItem(subDir));
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            ChangeIcon(item, true);
+        }
+
+        private void TreeViewItem_Collapsed(object sender, RoutedEventArgs e)
+        {
+            var item = e.Source as TreeViewItem;
+            ChangeIcon(item, false);
+        }
+
+        private static TreeViewItem CreateTreeItem(FileSystemInfo o, bool isLazy = true)
+        {
+            var isFolder = o is DirectoryInfo;
+
+            var item = new TreeViewItem();
+            item.Tag = o;
+
+            if(isFolder && isLazy)
+                item.Items.Add("Loading...");
+
+            var stack = new StackPanel {Orientation = Orientation.Horizontal};
+
+            item.Header = stack;
+
+            var icon = new Image();
+            icon.VerticalAlignment = VerticalAlignment.Center;
+            icon.Width = 16;
+            icon.Height = 16;
+            icon.Source = GetImageSource(isFolder, item.IsExpanded);
+            stack.Children.Add(icon);
+            
+            //Add the HeaderText After Adding the icon
+            var textBlock = new TextBlock();
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.Text = o.Name;
+
+            stack.Children.Add(textBlock);
+
+            return item;
+        }
+
+        private void ChangeIcon(TreeViewItem item, bool isExpand)
+        {
+            var isFolder = item.Tag is DirectoryInfo;
+            var panel = (StackPanel)item.Header;
+            var icon= (Image)panel.Children[0];
+
+            icon.Source = GetImageSource(isFolder, isExpand);
+        }
+
+        private static ImageSource GetImageSource(bool isFolder, bool itemIsExpanded)
+        {
+            if (isFolder && itemIsExpanded)
+            {
+                return new BitmapImage(new Uri(@"Resources/Images/OpenFolder_50px.png", UriKind.RelativeOrAbsolute));
+            }
+            else if(isFolder && !itemIsExpanded)
+            {
+                return new BitmapImage(new Uri(@"Resources/Images/Folder_50px.png", UriKind.RelativeOrAbsolute));
+            }
+
+            return new BitmapImage(new Uri(@"Resources/Images/File_52px.png", UriKind.RelativeOrAbsolute));
+        }
+
+        #endregion
     }
 }
