@@ -1,4 +1,4 @@
-﻿namespace Interpritator.Source.Interpritator
+﻿namespace Interpritator.Source.Interpritator.Command.Operations
 {
     public enum Operations
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Interpritator.Source.Interpritator
+namespace Interpritator.Source.Interpritator.Command.Operations
 {
     public static class OperationsInfo
     {

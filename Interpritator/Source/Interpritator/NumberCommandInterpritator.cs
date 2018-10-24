@@ -1,13 +1,44 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Interpritator.Source.Extension;
 using Interpritator.Source.Interpritator.Command;
 
 namespace Interpritator.Source.Interpritator
 {
     public class NumberCommandInterpritator
     {
+        private static List<Func<NumberCommand, object>> _commandList = new List<Func<NumberCommand, object>>
+        {
+            NumberCommand.GetOperandsList,
+            NumberCommand.NotFirst,
+            NumberCommand.Or,
+            NumberCommand.And,
+            NumberCommand.Xor,
+            NumberCommand.Impication,
+            NumberCommand.CoImpication,
+            NumberCommand.Equivalence,
+            NumberCommand.Pierce,
+            NumberCommand.Scheffer,
+            NumberCommand.Addition,
+            NumberCommand.Subtraction,
+            NumberCommand.Multiplication,
+            NumberCommand.StrongDivision,
+            NumberCommand.Mod,
+            NumberCommand.Swap,
+            NumberCommand.Insert,
+            NumberCommand.Convert,
+            ReadInBase,
+            NumberCommand.FindMaxDivider,
+            NumberCommand.ShiftL,
+            NumberCommand.ShiftR,
+            NumberCommand.CycleShiftL,
+            NumberCommand.CycleShiftR,
+            NumberCommand.Copy
+        };
+
         public static KeyValuePair<string, string> StartProgram(string binFilePatch)
         {
             var binFile = File.Open(binFilePatch, FileMode.Open);
@@ -51,119 +82,74 @@ namespace Interpritator.Source.Interpritator
         {
             var operation = command.GetOperator();
             var operationNumber = operation.ToInt();
-            var operationName = (Operations)operationNumber;
 
-            string commandResult;
+            string result;
 
-            switch (operationName)
+            var resultObj = _commandList[operationNumber].Invoke(command);
+            var isNumberCommandResult = resultObj is NumberCommand;
+
+            if (isNumberCommandResult)
             {
-                case Operations.Show:
-                    commandResult = command.GetOperandsList();
-                    break;
-
-                case Operations.NotFirst:
-                    commandResult = command.NotFirst().ToString();
-                    break;
-
-                case Operations.Disjunction:
-                    commandResult = command.Or().ToString();
-                    break;
-
-                case Operations.Сonjuction:
-                    commandResult = command.And().ToString();
-                    break;
-
-                case Operations.Xor:
-                    commandResult = command.Xor().ToString();
-                    break;
-
-                case Operations.Implication:
-                    commandResult = command.Impication().ToString();
-                    break;
-
-                case Operations.Koimplication:
-                    commandResult = command.CoImpication().ToString();
-                    break;
-
-                case Operations.Equivalence:
-                    commandResult = command.Equivalence().ToString();
-                    break;
-
-                case Operations.ArrowPierce:
-                    commandResult = command.Pierce().ToString();
-                    break;
-
-                case Operations.Scheffer:
-                    commandResult = command.Scheffer().ToString();
-                    break;
-
-                case Operations.Addition:
-                    commandResult = command.Addition().ToString();
-                    break;
-
-                case Operations.Subtraction:
-                    commandResult = command.Subtraction().ToString();
-                    break;
-
-                case Operations.Multiplication:
-                    commandResult = command.Multiplication().ToString();
-                    break;
-
-                case Operations.Division:
-                    commandResult = command.StrongDivision().ToString();
-                    break;
-
-                case Operations.Mod:
-                    commandResult = command.Mod().ToString();
-                    break;
-
-                case Operations.Swap:
-                    commandResult = command.Swap().ToString();
-                    break;
-
-                case Operations.Insert:
-                    commandResult = command.Insert().ToString();
-                    break;
-
-                case Operations.Convert:
-                    commandResult = command.Convert();
-                    break;
-
-                case Operations.ConvertEx:
-                    //TODO:: ввод с клавиатуры
-                    commandResult = command.ReadInBase("2").ToString();
-                    break;
-
-                case Operations.MaxTwoDegree:
-                    commandResult = command.FindMaxDivider().ToString();
-                    break;
-
-                case Operations.LeftShift:
-                    commandResult = command.ShiftL().ToString();
-                    break;
-
-                case Operations.RightShift:
-                    commandResult = command.ShiftR().ToString();
-                    break;
-
-                case Operations.CycleLeftShift:
-                    commandResult = command.CycleShiftL().ToString();
-                    break;
-
-                case Operations.CecleLeftShift:
-                    commandResult = command.CycleShiftR().ToString();
-                    break;
-
-                case Operations.Copy:
-                    commandResult = command.Copy().ToString();
-                    break;
-
-                default:
-                    throw new Exception("wrong command");
+                var numCommandResult = (NumberCommand) resultObj;
+                result = numCommandResult.ToString();
+            }
+            else
+            {
+                result = resultObj as string;
             }
 
-            return commandResult;
+            return result;
         }
 
+        public static string GetBinCommandResult(NumberCommand command)
+        {
+            var operation = command.GetOperator();
+            var operationNumber = operation.ToInt();
+
+            string result;
+
+            var resultObj = _commandList[operationNumber].Invoke(command);
+            var isNumberCommandResult = resultObj is NumberCommand;
+
+            if (isNumberCommandResult)
+            {
+                var numCommandResult = (NumberCommand)resultObj;
+                result = numCommandResult.ToBinStr();
+            }
+            else
+            {
+                result = resultObj as string;
+            }
+
+            return result;
+        }
+
+
+
+        private static string ReadInBase(NumberCommand command)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static KeyValuePair<string, string> RunCommand(BitArray bitCommand)
+        {
+            var result = new StringBuilder();
+            var errors = new StringBuilder();
+
+            try
+            {
+                var command = new NumberCommand(bitCommand);
+
+                var commandResult = GetBinCommandResult(command);
+
+                result.Append(bitCommand.ConvertToString() + " ---> " + commandResult + "\n");
+            }
+            catch (Exception e)
+            {
+                errors.Append(e + "\n");
+            }
+
+            return new KeyValuePair<string, string>(result.ToString(), errors.ToString());
+        }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Interpritator.Annotations;
+using Interpritator.Properties;
+using Interpritator.Source.Extension;
 using Interpritator.Source.Interpritator.Command;
 using static Interpritator.Source.Interpritator.Command.NumberCommand;
-using static Interpritator.Source.Interpritator.OperationsInfo;
+using static Interpritator.Source.Interpritator.Command.Operations.OperationsInfo;
 
 namespace Interpritator.Source.Interpritator
 {
@@ -14,12 +16,8 @@ namespace Interpritator.Source.Interpritator
     {
         #region File Operations
 
-        public static void SaveToBinFile(string patch,[NotNull] string dataInput)
+        public static void SaveToBinFile(string patch,[NotNull] IEnumerable<string> commandsArr)
         {
-
-            var separators = new[] { ';' };
-            var commandsArr = dataInput.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-
 
             var file = File.Open(patch, FileMode.Create);
             var binaryWriter = new BinaryWriter(file);
@@ -27,9 +25,6 @@ namespace Interpritator.Source.Interpritator
             var counter = 1;
             foreach (var command in commandsArr)
             {
-                if (command == commandsArr.Last())
-                    break;
-
                 try
                 {
                     var bitCommand = CommandToBit(command);
@@ -70,13 +65,7 @@ namespace Interpritator.Source.Interpritator
     
             return result.ToString();
         }
-
-        #endregion
-
-
-        #region ToBit Functions
-
-        private static BitArray CommandToBit(string command)
+        public static BitArray CommandToBit(string command)
         {
             var resultCommand = new NumberCommand();
 
@@ -119,6 +108,12 @@ namespace Interpritator.Source.Interpritator
 
             return resultCommand.GetBitArr();
         }
+
+        #endregion
+
+
+        #region ToBit Functions
+
 
         private static BitArray OperandToBit(string part)
         {

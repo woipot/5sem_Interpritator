@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 
-namespace Interpritator.Source.Interpritator
+namespace Interpritator.Source.Extension
 {
     static class BitArrayExtension
     {
