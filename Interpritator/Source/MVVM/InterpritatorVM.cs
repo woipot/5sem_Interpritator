@@ -320,6 +320,9 @@ namespace Interpritator.Source.MVVM
                 if (!IsDebugMode)
                     break;
             }
+
+            if (IsDebugMode)
+                Step();
         }
 
         private void Step()
