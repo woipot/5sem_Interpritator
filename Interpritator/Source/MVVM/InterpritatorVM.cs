@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using Interpritator.Source.Convertrs;
 using Interpritator.Source.Interpritator;
-using Interpritator.Source.Interpritator.Command;
 using Interpritator.Source.MVVM.Models;
 using Interpritator.Source.UserInterfaceUtilities;
 using Microsoft.Practices.Prism.Commands;
@@ -25,8 +24,10 @@ namespace Interpritator.Source.MVVM
         private string _commandInput;
 
         private List<string> _commandsList;
-        private int _currentCommand; 
+        private int _currentCommand;
+        private bool _isDebugMode;
 
+        #region Properties
 
         public string CurrentFileName
         {
@@ -35,7 +36,6 @@ namespace Interpritator.Source.MVVM
         }
 
         public ObservableCollection<BreakPoint> BreakPointsList { get; set; }
-
 
         public string CommandInput
         {
@@ -52,7 +52,7 @@ namespace Interpritator.Source.MVVM
         public string ResultOutput
         {
             get => _resultOutput;
-            set
+            private set
             {
                 _resultOutput = value;
                 OnPropertyChanged("ResultOutput");
@@ -62,20 +62,29 @@ namespace Interpritator.Source.MVVM
         public string ErrorOutput
         {
             get => _errorOutput;
-            set
+            private set
             {
                 _errorOutput = value;
                 OnPropertyChanged("ErrorOutput");
             }
         }
 
-        public bool IsDebugMod { get; private set; } = false;
+        public bool IsDebugMode
+        {
+            get => _isDebugMode;
+            private set
+            {
+                _isDebugMode = value;
+                OnPropertyChanged("IsDebugMode");
+                OnPropertyChanged("IsSimpleMode");
+            }
+        }
 
-        public bool IsSimpleMode => !IsDebugMod;
+        public bool IsSimpleMode => !IsDebugMode;
 
+        #endregion
         public InterpritatorVM()
         {
-            _currentCommand = -1;
             _currentFilePath = null;
             BreakPointsList = new ObservableCollection<BreakPoint>();
 
@@ -142,13 +151,19 @@ namespace Interpritator.Source.MVVM
         #region Run Menu
         private void Start()
         {
-            var patch = SaveBinFileDialog();
+            if (_commandsList == null || _commandsList.Count == 0)
+            {
+                MessageBox.Show("Commands not found");
+                return;
+            }
+
+            var patch =  SaveBinFileDialog();
             if (patch != null)
             {
                 try
                 {
                     Compiler.SaveToBinFile(patch, _commandsList);
-                    var interpritatorResult = NumberCommandInterpritator.StartProgram(patch);
+                    var interpritatorResult = NumberCommandInterpritator.ExecuteProgram(patch);
 
                     ResultOutput = interpritatorResult.Key;
                     ErrorOutput = interpritatorResult.Value;
@@ -163,16 +178,20 @@ namespace Interpritator.Source.MVVM
 
         private void StartDebug()
         {
+            if (_commandsList == null || _commandsList.Count == 0)
+            {
+                MessageBox.Show("Commands not found");
+                return;
+            }
+
             _resultOutput = "";
             _errorOutput = "";
-            IsDebugMod = true;
-            OnPropertyChanged("IsDebugMod");
-            OnPropertyChanged("IsSimpleMode");
+            IsDebugMode = true;
 
             _currentCommand = 0;
             StepToNextBp(); 
            
-        }
+       }
         #endregion
 
         #endregion
@@ -288,44 +307,18 @@ namespace Interpritator.Source.MVVM
 
         private int GetCharCount(char findingChar)
         {
-            var result = 0;
-            foreach (var character in CommandInput)
-            {
-                if (character == findingChar) result++;
-            }
-            return result;
+            return CommandInput.Count(character => character == findingChar);
         }
+
 
         private void StepToNextBp()
         {
-            try
+            if (_currentCommand >= _commandsList.Count) return;
+            while (!BreakPointsList[_currentCommand].IsEnabled)
             {
-                if (BreakPointsList.Any())
-                {
-                    while (!BreakPointsList[_currentCommand].IsEnabled)
-                    {
-                        var strCommand = CommandInput.Split('\n')[_currentCommand];
-
-                        var bitCommand = Compiler.CommandToBit(strCommand.Trim());
-
-                        var interpritatorResult = NumberCommandInterpritator.RunCommand(bitCommand);
-
-                        ResultOutput += interpritatorResult.Key;
-                        ErrorOutput += interpritatorResult.Value;
-                        _currentCommand++;
-                        if (_currentCommand >= BreakPointsList.Count)
-                        {
-                            EndDebug();
-                            break;
-
-                        }
-                    }
-                }
-
-            }
-            catch (CompilerException ce)
-            {
-                ErrorOutput = "#Error: " + ce.Message + "-->" + ce.WrongCommand + "Command № [" + ce.CommandNumber + "]\n";
+                Step();
+                if (!IsDebugMode)
+                    break;
             }
         }
 
@@ -333,37 +326,42 @@ namespace Interpritator.Source.MVVM
         {
             try
             {
-                if (BreakPointsList.Any())
+                if (!BreakPointsList.Any()) return;
+
+                var strCommand = _commandsList[_currentCommand];
+
+                if (!string.IsNullOrEmpty(strCommand.Trim()))
                 {
-                    var strCommand = CommandInput.Split('\n')[_currentCommand];
+                    var bitCommand = Compiler.CommandToBit(strCommand);
 
-                    var bitCommand = Compiler.CommandToBit(strCommand.Trim());
-
-                    var interpritatorResult = NumberCommandInterpritator.RunCommand(bitCommand);
+                    var interpritatorResult = NumberCommandInterpritator.RunCommand(bitCommand, true);
 
                     ResultOutput += interpritatorResult.Key;
                     ErrorOutput += interpritatorResult.Value;
-                    _currentCommand++;
-                    if (_currentCommand >= BreakPointsList.Count)
-                    {
-                        EndDebug();
-                    }
                 }
 
             }
             catch (CompilerException ce)
             {
-                ErrorOutput = "#Error: " + ce.Message + "-->" + ce.WrongCommand + "Command № [" + ce.CommandNumber + "]\n";
+                ErrorOutput = "#Error: " + ce.Message + "-->" + ce.WrongCommand + " : Command № [" + ce.CommandNumber +
+                              "]\n";
+            }
+            catch (Exception e)
+            {
+                ErrorOutput = e.Message;
+            }
+
+            _currentCommand++;
+            if (_currentCommand >= _commandsList.Count)
+            {
+                EndDebug();
             }
         }
 
         private void EndDebug()
         {
-            IsDebugMod = false;
+            IsDebugMode = false;
             _currentCommand = 0;
-
-            OnPropertyChanged("IsDebugMod");
-            OnPropertyChanged("IsSimpleMode");
 
         }
     }

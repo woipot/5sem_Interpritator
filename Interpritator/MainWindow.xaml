@@ -71,8 +71,8 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal"> 
                 <Label Background="#FF2D2D30"  Content="{Binding CurrentFileName}" Foreground="White"/>
-                <Button Margin="5" Content="Next Step" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsDebugMod}"/>
-                <Button Margin="5" Content="To Next point" Command="{Binding StepOutCommand}" IsEnabled="{Binding IsDebugMod}"/>
+                <Button Margin="5" Content="Next Step" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsDebugMode}"/>
+                <Button Margin="5" Content="To Next point" Command="{Binding StepOutCommand}" IsEnabled="{Binding IsDebugMode}"/>
             </StackPanel>
 
             <ScrollViewer Grid.Row="1">
@@ -89,7 +89,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <TextBox IsReadOnly="{Binding IsDebugMod}"  Text ="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" AcceptsReturn="True" Background="#FF1E1E1E" Foreground="White" FontSize="16"/>
+                    <TextBox IsReadOnly="{Binding IsDebugMode}"  Text ="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" AcceptsReturn="True" Background="#FF1E1E1E" Foreground="White" FontSize="16"/>
                 </Grid>
             </ScrollViewer>
         </Grid>
@@ -108,7 +108,8 @@
             </Grid.RowDefinitions>
 
             <Label Background="#FF2D2D30"  Grid.Row="0" Content="Program result" Foreground="White"/>
-            <TextBox Text ="{Binding ResultOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="#FF252526" Grid.Row="1" Grid.Column="0" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Foreground="White"/>
+            <TextBox Text ="{Binding ResultOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="#FF252526" Grid.Row="1" Grid.Column="0"
+                     IsReadOnly="True" VerticalScrollBarVisibility="Auto" Foreground="Aqua"/>
         </Grid>
 
         <GridSplitter Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3" Height="3"
@@ -124,7 +125,7 @@
             </Grid.RowDefinitions>
 
             <Label Background="#FF2D2D30"  Grid.Row="0" Content="Info" Foreground="White"/>
-            <TextBox Text ="{Binding ErrorOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="1" Background="#FF252526" VerticalScrollBarVisibility ="Visible" IsReadOnly="True"/>
+            <TextBox Text ="{Binding ErrorOutput, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="1" Background="#FF252526" VerticalScrollBarVisibility ="Visible" IsReadOnly="True" Foreground="Red"/>
         </Grid>
 
     </Grid>

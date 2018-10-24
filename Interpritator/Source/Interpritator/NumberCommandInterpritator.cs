@@ -39,7 +39,7 @@ namespace Interpritator.Source.Interpritator
             NumberCommand.Copy
         };
 
-        public static KeyValuePair<string, string> StartProgram(string binFilePatch)
+        public static KeyValuePair<string, string> ExecuteProgram(string binFilePatch)
         {
             var binFile = File.Open(binFilePatch, FileMode.Open);
 
@@ -54,22 +54,9 @@ namespace Interpritator.Source.Interpritator
                     var intCommand = br.ReadInt32();
                     var bitCommand = BitArrayExtension.IntToBitArr(intCommand);
 
-                    try
-                    {
-                       
-                        var command = new NumberCommand(bitCommand);
-                        var commandBefore = new NumberCommand(bitCommand);
-
-                        var commandResult = GetCommandResult(command);
-
-                        result.Append(commandBefore + " ---> " + commandResult+"\n");
-                    }
-                    catch (Exception e)
-                    {
-                        errors.Append(e + "\n");
-                    }
-
-
+                    var commandResult = RunCommand(bitCommand, false);
+                    result.Append(commandResult.Key);
+                    errors.Append(commandResult.Value);
                 }
             }
 
@@ -78,60 +65,24 @@ namespace Interpritator.Source.Interpritator
             return new KeyValuePair<string, string>(result.ToString(), errors.ToString());
         }
 
-        public static string GetCommandResult(NumberCommand command)
+        public static string GetCommandResult(NumberCommand command, bool isBin = false)
         {
             var operation = command.GetOperator();
             var operationNumber = operation.ToInt();
 
-            string result;
 
             var resultObj = _commandList[operationNumber].Invoke(command);
-            var isNumberCommandResult = resultObj is NumberCommand;
 
-            if (isNumberCommandResult)
+            if (resultObj is NumberCommand isNumberCommandResult)
             {
                 var numCommandResult = (NumberCommand) resultObj;
-                result = numCommandResult.ToString();
+               return (isBin)? numCommandResult.ToBinStr() : numCommandResult.ToString();
             }
-            else
-            {
-                result = resultObj as string;
-            }
-
-            return result;
+            return resultObj as string;
+             
         }
 
-        public static string GetBinCommandResult(NumberCommand command)
-        {
-            var operation = command.GetOperator();
-            var operationNumber = operation.ToInt();
-
-            string result;
-
-            var resultObj = _commandList[operationNumber].Invoke(command);
-            var isNumberCommandResult = resultObj is NumberCommand;
-
-            if (isNumberCommandResult)
-            {
-                var numCommandResult = (NumberCommand)resultObj;
-                result = numCommandResult.ToBinStr();
-            }
-            else
-            {
-                result = resultObj as string;
-            }
-
-            return result;
-        }
-
-
-
-        private static string ReadInBase(NumberCommand command)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static KeyValuePair<string, string> RunCommand(BitArray bitCommand)
+        public static KeyValuePair<string, string> RunCommand(BitArray bitCommand, bool isBinResult = false)
         {
             var result = new StringBuilder();
             var errors = new StringBuilder();
@@ -139,10 +90,12 @@ namespace Interpritator.Source.Interpritator
             try
             {
                 var command = new NumberCommand(bitCommand);
+                var commandCopy = new NumberCommand(bitCommand);
 
-                var commandResult = GetBinCommandResult(command);
+                var commandResult = GetCommandResult(command, isBinResult);
 
-                result.Append(bitCommand.ConvertToString() + " ---> " + commandResult + "\n");
+                var oldCommandStr = isBinResult ? commandCopy.ToBinStr() : commandCopy.ToString();
+                result.Append(oldCommandStr  + " ---> " + commandResult + "\n");
             }
             catch (Exception e)
             {
@@ -151,5 +104,12 @@ namespace Interpritator.Source.Interpritator
 
             return new KeyValuePair<string, string>(result.ToString(), errors.ToString());
         }
+
+
+        private static string ReadInBase(NumberCommand command)
+        {
+            return command.ToBinStr();
+        }
+
     }
 }

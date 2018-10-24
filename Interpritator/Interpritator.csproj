@@ -78,7 +78,6 @@
     <Compile Include="Source\Interpritator\Command\Operations\OperationsInfo.cs" />
     <Compile Include="Source\MVVM\InterpritatorVM.cs" />
     <Compile Include="Source\MVVM\Models\BreakPoint.cs" />
-    <Compile Include="Source\MVVM\Models\TreeViewModel.cs" />
     <Compile Include="Source\UserInterfaceUtilities\MainMenuFunc.cs" />
     <Compile Include="Source\UserInterfaceUtilities\TreeViewItemTypes.cs" />
     <Page Include="MainWindow.xaml">

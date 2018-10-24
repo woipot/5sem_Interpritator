@@ -1,17 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Interpritator.Source.Interpritator;
-using Interpritator.Source.UserInterfaceUtilities;
-using Application = System.Windows.Application;
-using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
-using Orientation = System.Windows.Controls.Orientation;
-using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
+﻿using System.Windows;
 
 namespace Interpritator
 {
