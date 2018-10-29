@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Interpritator.Source.Convertrs;
+using Interpritator.Source.Convertors;
 using Interpritator.Source.Interpritator;
 using Interpritator.Source.MVVM.Models;
 using Interpritator.Source.UserInterfaceUtilities;

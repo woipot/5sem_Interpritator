@@ -68,8 +68,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Source\Convertrs\ArrToOneStringConverter.cs" />
+    <Compile Include="Source\Convertors\ArrToOneStringConverter.cs" />
+    <Compile Include="Source\Convertors\BinaryConverter.cs" />
     <Compile Include="Source\Extension\BitArrayExtension.cs" />
+    <Compile Include="Source\Extension\StringExtension.cs" />
     <Compile Include="Source\Interpritator\Compiler\Compiler.cs" />
     <Compile Include="Source\Interpritator\Compiler\CompilerException.cs" />
     <Compile Include="Source\Interpritator\Command\NumberCommand.cs" />

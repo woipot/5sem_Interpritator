@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Interpritator.Source.Extension
 {
-    static class BitArrayExtension
+    public static class BitArrayExtension
     {
         #region Get Set Range
 

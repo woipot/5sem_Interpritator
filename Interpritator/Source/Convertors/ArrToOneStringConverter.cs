@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Interpritator.Source.Convertrs
+namespace Interpritator.Source.Convertors
 {
     public static class ArrToOneStringConverter    {
         public static string Convert(IEnumerable<string> value)
@@ -15,16 +15,19 @@ namespace Interpritator.Source.Convertrs
             return result;
         }
 
-        public static IEnumerable<string> ConvertBack(string value)
+        public static IEnumerable<string> ConvertBack(string value, bool needRemove = true)
         {
-            var commands = FromsStringtoCommands(System.Convert.ToString(value));
+            var commands = FromsStringtoCommands(value, needRemove);
             return new ObservableCollection<string>(commands);
         }
 
-        private static IEnumerable<string> FromsStringtoCommands(string text)
+        private static IEnumerable<string> FromsStringtoCommands(string text, bool needRemove = true)
         {
             var commands = new List<string>();
-            var parsedString = text.Split(new[]{'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
+            var parsedString = needRemove
+                ? text.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries)
+                : text.Split(new[] {"\r\n"}, StringSplitOptions.None);
+
 
             commands.AddRange(parsedString);
 

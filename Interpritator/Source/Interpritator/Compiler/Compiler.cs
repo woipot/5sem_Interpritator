@@ -130,9 +130,8 @@ namespace Interpritator.Source.Interpritator
 
         private static BitArray OperatorToBit(string strOperator)
         {
-            var index = 0;
+            var index = OperationsName.IndexOf(strOperator);
 
-            index = OperationsName.IndexOf(strOperator);
             if (index < 0)
                 throw new CompilerException(strOperator, "Incorrect operator");
 
