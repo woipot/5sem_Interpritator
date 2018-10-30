@@ -3,21 +3,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using System.Windows.Forms;
 using Interpritator.Source.Convertors;
 using Interpritator.Source.Interpritator;
 using Interpritator.Source.MVVM.Models;
+using Interpritator.Source.TreeView;
 using Interpritator.Source.UserInterfaceUtilities;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Mvvm;
-using Microsoft.Win32;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace Interpritator.Source.MVVM
 {
     internal class InterpritatorVM : BindableBase
     {
 
-        private FileInfo _currentFilePath;
+        private FileSystemInfo _currentFilePath;
 
         private string _resultOutput;
         private string _errorOutput;
@@ -28,6 +32,7 @@ namespace Interpritator.Source.MVVM
         private bool _isDebugMode;
 
         #region Properties
+        public ObservableCollection<FileSystemObjectInfo> CurrentDirectories { get; set; }
 
         public string CurrentFileName
         {
@@ -83,11 +88,14 @@ namespace Interpritator.Source.MVVM
         public bool IsSimpleMode => !IsDebugMode;
 
         #endregion
+
+
         public InterpritatorVM()
         {
             _currentFilePath = null;
             BreakPointsList = new ObservableCollection<BreakPoint>();
 
+            OpenProjectCommand = new DelegateCommand(OpenProject);
             SaveFileCommand    = new DelegateCommand(Save);
             SaveFileAsCommand    = new DelegateCommand(SaveAs);
 
@@ -97,11 +105,15 @@ namespace Interpritator.Source.MVVM
             StartDebugCommand = new DelegateCommand(StartDebug);
             StepOutCommand = new DelegateCommand(StepToNextBp);
             NextStepCommand = new DelegateCommand(Step);
+
+            TreeDoubleClickCommand = new DelegateCommand<object>(TreeViewClick);
+            CurrentDirectories = new ObservableCollection<FileSystemObjectInfo>(){new FileSystemObjectInfo(new DirectoryInfo(Directory.GetCurrentDirectory()))};
+
         }
 
 
         #region Commands
-        public DelegateCommand OpenFileCommand {get; set;}
+        public DelegateCommand OpenProjectCommand { get; set; }
         public DelegateCommand SaveFileCommand {get; set;}
         public DelegateCommand SaveFileAsCommand {get; set;}
         public DelegateCommand ExitCommand { get; set; }
@@ -111,6 +123,8 @@ namespace Interpritator.Source.MVVM
         public DelegateCommand NextStepCommand { get; set; }
         public DelegateCommand StepOutCommand { get; set; }
 
+
+        public DelegateCommand<object> TreeDoubleClickCommand { get; set; }
 
         #endregion
 
@@ -122,7 +136,7 @@ namespace Interpritator.Source.MVVM
             var isGoodDialogResult = SaveFileDialog();
             if (isGoodDialogResult)
             {
-                MainMenuFunc.SaveFile(_currentFilePath.FullName, _commandsList);
+                MainMenuFunc.SaveFile(_currentFilePath.FullName, CommandInput);
             }
         }
 
@@ -133,12 +147,12 @@ namespace Interpritator.Source.MVVM
                 var isGoodDialogResult = SaveFileDialog();
                 if (isGoodDialogResult)
                 {
-                    MainMenuFunc.SaveFile(_currentFilePath.FullName, _commandsList);
+                    MainMenuFunc.SaveFile(_currentFilePath.FullName, CommandInput);
                 }
             }
             else
             {
-                MainMenuFunc.SaveFile(_currentFilePath.FullName, _commandsList);
+                MainMenuFunc.SaveFile(_currentFilePath.FullName, CommandInput);
             }
         }
 
@@ -273,6 +287,19 @@ namespace Interpritator.Source.MVVM
         #endregion
 
 
+        private void OpenProject()
+        {
+            var fbd = new FolderBrowserDialog();
+            var result = fbd.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                _currentFilePath = null;
+                CurrentDirectories.Clear();
+                CurrentDirectories.Add(new FileSystemObjectInfo(new DirectoryInfo(fbd.SelectedPath)));
+                OnPropertyChanged("CurrentDirectories");
+            }
+        }
+
         private void Update()
         {
             _commandsList = ArrToOneStringConverter.ConvertBack(_commandInput).ToList();
@@ -366,6 +393,23 @@ namespace Interpritator.Source.MVVM
             IsDebugMode = false;
             _currentCommand = 0;
 
+        }
+
+        private void TreeViewClick(object obj)
+        {
+            try
+            {
+                var fileSystemObjectInfo = obj as FileSystemObjectInfo;
+                if (fileSystemObjectInfo?.FileSystemInfo.Extension == ".inw")
+                {
+                    _currentFilePath = fileSystemObjectInfo.FileSystemInfo;
+                    CommandInput = MainMenuFunc.OpenFile(fileSystemObjectInfo.FileSystemInfo.FullName);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error in opening file");
+            }
         }
     }
 }
