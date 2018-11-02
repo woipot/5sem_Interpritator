@@ -245,7 +245,7 @@ namespace Interpritator.Source.Interpritator.Command
             var secondOperand = GetOperand(2);
 
             var resultInt = firstOperand.ToInt() + secondOperand.ToInt();
-            var result = BitArrayExtension.IntToBitArr(resultInt);
+            var result = BitArrayExtension.IntToBitArr(resultInt, OperandSize);
             SetOperand(3, result);
 
              return new NumberCommand(_command);
@@ -257,7 +257,7 @@ namespace Interpritator.Source.Interpritator.Command
             var secondOperand = GetOperand(2);
 
             var resultInt = firstOperand.ToInt() - secondOperand.ToInt();
-            var result = BitArrayExtension.IntToBitArr(resultInt);
+            var result = BitArrayExtension.IntToBitArr(resultInt, OperandSize);
             SetOperand(3, result);
 
              return new NumberCommand(_command);
@@ -269,7 +269,7 @@ namespace Interpritator.Source.Interpritator.Command
             var secondOperand = GetOperand(2);
 
             var resultInt = firstOperand.ToInt() * secondOperand.ToInt();
-            var result = BitArrayExtension.IntToBitArr(resultInt);
+            var result = BitArrayExtension.IntToBitArr(resultInt, OperandSize);
             SetOperand(3, result);
 
              return new NumberCommand(_command);
@@ -281,7 +281,7 @@ namespace Interpritator.Source.Interpritator.Command
             var secondOperand = GetOperand(2);
 
             var resultInt = firstOperand.ToInt() / secondOperand.ToInt();
-            var result = BitArrayExtension.IntToBitArr(resultInt);
+            var result = BitArrayExtension.IntToBitArr(resultInt, OperandSize);
             SetOperand(3, result);
 
              return new NumberCommand(_command);
@@ -293,7 +293,7 @@ namespace Interpritator.Source.Interpritator.Command
             var secondOperand = GetOperand(2);
 
             var resultInt = firstOperand.ToInt() % secondOperand.ToInt();
-            var result = BitArrayExtension.IntToBitArr(resultInt);
+            var result = BitArrayExtension.IntToBitArr(resultInt, OperandSize);
             SetOperand(3, result);
 
              return new NumberCommand(_command);
