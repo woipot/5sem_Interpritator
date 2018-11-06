@@ -109,6 +109,13 @@ namespace Interpritator.Source.MVVM
             TreeDoubleClickCommand = new DelegateCommand<object>(TreeViewClick);
             CurrentDirectories = new ObservableCollection<FileSystemObjectInfo>(){new FileSystemObjectInfo(new DirectoryInfo(Directory.GetCurrentDirectory()))};
 
+            HelpCommand = new DelegateCommand(OpenHelp);
+        }
+
+        private void OpenHelp()
+        {
+            var helpwin = new Help();
+            helpwin.Show();
         }
 
 
@@ -122,6 +129,8 @@ namespace Interpritator.Source.MVVM
         public DelegateCommand StartDebugCommand { get; set; }
         public DelegateCommand NextStepCommand { get; set; }
         public DelegateCommand StepOutCommand { get; set; }
+
+        public DelegateCommand HelpCommand { get; set; }
 
 
         public DelegateCommand<object> TreeDoubleClickCommand { get; set; }

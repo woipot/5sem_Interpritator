@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
-using Interpritator.Source.Extension;
 using Interpritator.Source.Interpritator.Command.Operations;
 
 namespace Interpritator.Source.Convertors

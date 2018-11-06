@@ -54,6 +54,8 @@
                 <MenuItem Header="Start from file"/>
                 <MenuItem Header="Start Debug" Command="{Binding StartDebugCommand}"/>
             </MenuItem>
+
+            <MenuItem Header="Help" Command="{Binding HelpCommand}"/>
         </Menu>
 
         <TreeView x:Name="TreeView" Grid.Column="0" Grid.Row="1" Grid.RowSpan="3"

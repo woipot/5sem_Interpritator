@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Interpritator.Properties;
 
 namespace Interpritator.Source.UserInterfaceUtilities
 {
-    public class MainMenuFunc
+    public static class MainMenuFunc
     {
         public static void SaveFile(string patch,[NotNull] string input)
         {
